@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+  name: petition-count
+spec:
+  rules:
+    - host: petition.rossmasters.com
+      http:
+        paths:
+        - backend:
+            serviceName: petition-count-web
+            servicePort: http
+          path: /
+  tls:
+    - hosts:
+        - petition.rossmasters.com
+      secretName: petition-tls

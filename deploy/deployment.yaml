@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: petition-count-render
@@ -16,12 +16,15 @@ spec:
       containers:
         - name: webserver
           image: nginx
+          ports:
+            - containerPort: 80
+              name: http
           volumeMounts:
             - name: rendered-pages
               mountPath: /usr/share/nginx/html
 
         - name: counter
-          image: counter
+          image: registry.gitlab.com/rmasters/petition-counter:latest
           command: ["sh", "-c", "while [ true ]; do flask render; sleep 1; done | tee -a /dev/stdout"]
           env:
             - name: RENDER_PATH
@@ -39,9 +42,15 @@ spec:
           persistentVolumeClaim:
             claimName: petition-counts-db
 
+        - name: rendered-pages
+          emptyDir: {}
+
+      imagePullSecrets:
+        - name: registry-gitlab
+
 ---
 
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: petition-count-collector
@@ -58,7 +67,7 @@ spec:
     spec:
       containers:
         - name: counter
-          image: counter
+          image: registry.gitlab.com/rmasters/petition-counter:latest
           command: ["sh", "-c", "while [ true ]; do flask track_petition; sleep 5; done | tee -a /dev/stdout"]
           env:
             - name: DB_PATH
@@ -71,4 +80,7 @@ spec:
         - name: petition-counts-db
           persistentVolumeClaim:
             claimName: petition-counts-db
+
+      imagePullSecrets:
+        - name: registry-gitlab
 
