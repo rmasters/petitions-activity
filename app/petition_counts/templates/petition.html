@@ -2,8 +2,11 @@
 <html lang="en">
     <head>
         <!-- Brace yourself for some hacky stuff; I wrote this on a boat -->
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
         <title>Live petition count for: Revoke Article 50 and remain in the EU.</title>
+        <meta name="twitter:card" content="summary" />
+
+        <meta name="twitter:creator" content="rossmasters" />
         <style>
 /* Some colours/styles shamelessly lifted. It's an awesome green. */
 * {
@@ -104,5 +107,21 @@ body {
                 <p></p>
             </div>
         </footer>
+
+        <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+        <!-- Self-hosted, supposed to be privacy friendly! -->
+        <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//petitionanalytics.rossmasters.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'QQVWD');
+fathom('trackPageview');
+        </script>
     </body>
 </html>
