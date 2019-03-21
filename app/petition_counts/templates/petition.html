@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Brace yourself for some hacky stuff; I wrote this on a boat -->
+        <meta charset="utf-8">
+        <title>Live petition count for: Revoke Article 50 and remain in the EU.</title>
+        <style>
+/* Some colours/styles shamelessly lifted. It's an awesome green. */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: #0b0c0c;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 19px;
+    font-weight: 400;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 650px;
+}
+
+.header {
+    background: #080;
+    color: white;
+    padding: 1.00rem;
+}
+
+.title {
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.title__prefix {
+    /*color: #6f777b;*/
+    display: block;
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.signature_count {
+    font-size: 48px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.signature_count__suffix {
+    font-size: 27px;
+}
+
+.cta {
+    background: #080;
+    box-shadow: 0 2px 0 #003c00;
+    color: white;
+    display: inline-block;
+    font-size: 24px;
+    padding: 1.00em 2.00em;
+}
+
+.footer {
+    border-top: 1px solid #6f777b;
+    color: #6f777b;
+    font-size: 14px;
+    margin-top: 5.00em;
+    text-align: center;
+}
+
+.footer p {
+    display: inline-block;
+}
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="container">
+                <h1 class="title"><span class="title__prefix">Petition</span> Revoke Article 50 and remain in the EU</h1>
+            </div>
+        </header>
+
+        <div class="container">
+            <p><abbr title="Stats last fetched at {{ updated_at }}">{{ updated_at|relative_date }} ago</abbr>, the number of signatories to the petition to the UK Government and Parliament, was:</p>
+            <h2 class="signature_count">{{ total_signatures | number_format }} <span class="signature_count__suffix">signatures</span></h2>
+
+            <p>If you haven't already signed it:</p>
+            <div style="text-align: center">
+                <a href="https://petition.parliament.uk/petitions/241584" target="_blank" class="cta">Sign the petition</a>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <p>
+                   This unofficial site has no relation to the UK Government and Parliament petitions site. &bull;
+                   {% if rendered_at %}Page generated at {{ rendered_at }}. &bull;{% endif %}
+                   Yell at <a href="https://twitter.com/rossmasters" target="_blank">@rossmasters</a>.
+                </p>
+                <p></p>
+            </div>
+        </footer>
+    </body>
+</html>

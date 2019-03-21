@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: petition-count-render
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: petition-count
+  template:
+    metadata:
+      name: petition-count-web
+      labels:
+        app: petition-count
+    spec:
+      containers:
+        - name: webserver
+          image: nginx
+          volumeMounts:
+            - name: rendered-pages
+              mountPath: /usr/share/nginx/html
+
+        - name: counter
+          image: counter
+          command: ["sh", "-c", "while [ true ]; do flask render; sleep 1; done | tee -a /dev/stdout"]
+          env:
+            - name: RENDER_PATH
+              value: /html
+            - name: DB_PATH
+              value: /data/petition.sqlite
+          volumeMounts:
+            - name: rendered-pages
+              mountPath: /html
+            - name: petition-counts-db
+              mountPath: /data
+
+      volumes:
+        - name: petition-counts-db
+          persistentVolumeClaim:
+            claimName: petition-counts-db
+
+---
+
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: petition-count-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petition-count-fetcher
+  template:
+    metadata:
+      name: petition-count-fetch
+      labels:
+        app: petition-count-fetcher
+    spec:
+      containers:
+        - name: counter
+          image: counter
+          command: ["sh", "-c", "while [ true ]; do flask track_petition; sleep 5; done | tee -a /dev/stdout"]
+          env:
+            - name: DB_PATH
+              value: /data/petition.sqlite
+          volumeMounts:
+            - name: petition-counts-db
+              mountPath: /data
+
+      volumes:
+        - name: petition-counts-db
+          persistentVolumeClaim:
+            claimName: petition-counts-db
+
