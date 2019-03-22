@@ -5,8 +5,11 @@
         <meta charset="utf-8" />
         <title>Live petition count for: Revoke Article 50 and remain in the EU.</title>
         <meta name="twitter:card" content="summary" />
-
-        <meta name="twitter:creator" content="rossmasters" />
+        <meta property="og:url" content="https://petition.rossmasters.com/" />
+        <meta property="og:title" content="#RevokeArticle50 petition tracker" />
+        <meta property="og:description" content="Tracking the number of signatures to the fastest-growing UK Parliament petition" />
+        <meta name="twitter:creator" content="@rossmasters" />
+        <meta http-equiv="refresh" content="5" />
         <style>
 /* Some colours/styles shamelessly lifted. It's an awesome green. */
 * {
@@ -79,6 +82,14 @@ body {
     display: inline-block;
 }
         </style>
+
+        <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+        <!-- Self-hosted, supposed to be privacy friendly! -->
+        <script async src="//petitionanalytics.rossmasters.com/tracker.js" id="fathom-script"></script>
+        <script>
+            fathom('set', 'siteId', 'QQVWD');
+            fathom('trackPageview');
+        </script>
     </head>
     <body>
         <header class="header">
@@ -107,21 +118,5 @@ body {
                 <p></p>
             </div>
         </footer>
-
-        <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
-        <!-- Self-hosted, supposed to be privacy friendly! -->
-        <script>
-(function(f, a, t, h, o, m){
-	a[h]=a[h]||function(){
-		(a[h].q=a[h].q||[]).push(arguments)
-	};
-	o=f.createElement('script'),
-	m=f.getElementsByTagName('script')[0];
-	o.async=1; o.src=t; o.id='fathom-script';
-	m.parentNode.insertBefore(o,m)
-})(document, window, '//petitionanalytics.rossmasters.com/tracker.js', 'fathom');
-fathom('set', 'siteId', 'QQVWD');
-fathom('trackPageview');
-        </script>
     </body>
 </html>

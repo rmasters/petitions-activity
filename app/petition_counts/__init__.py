@@ -6,6 +6,8 @@ from babel.dates import format_timedelta
 import dateutil.parser
 from flask import Flask, render_template, g
 import requests
+import MySQLdb
+import MySQLdb.cursors
 
 PETITION_ID = 241584
 
@@ -23,8 +25,9 @@ def dict_factory(cursor, row):
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        g._database = sqlite3.connect(os.environ.get('DB_PATH'))
-        g._database.row_factory = dict_factory
+        g._database = MySQLdb.connect(host=os.environ.get('DB_HOST'), db=os.environ.get('DB_NAME'), user=os.environ.get('DB_USER'), password=os.environ.get('DB_PASS'), cursorclass=MySQLdb.cursors.DictCursor)
+        #g._database = sqlite3.connect(os.environ.get('DB_PATH'))
+        #g._database.row_factory = dict_factory
         db = g._database
 
     return db
@@ -46,10 +49,10 @@ def init_db():
     db = get_db()
     db.cursor().executescript("""
     CREATE TABLE petition_signatures (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
         petition_id INTEGER,
         recorded_at DATETIME,
-        signature_count BIGINTEGER
+        signature_count BIGINT
     )
     """)
     db.commit()
@@ -67,8 +70,8 @@ def track_petition():
     conn = get_db()
     signature_count = data['signature_count']
     recorded_at = datetime.datetime.utcnow()
-    conn.execute(
-            """insert into petition_signatures (petition_id, recorded_at, signature_count) values (?, ?, ?)""",
+    conn.cursor().execute(
+            """insert into petition_signatures (petition_id, recorded_at, signature_count) values (%s, %s, %s)""",
             (PETITION_ID, recorded_at, signature_count)
             )
     conn.commit()
@@ -87,11 +90,14 @@ def render():
 @app.route("/petition")
 def petition():
     conn = get_db()
-    latest_update = conn.execute("select recorded_at, signature_count from petition_signatures order by recorded_at desc limit 1").fetchone()
+    cur = conn.cursor()
+    cur.execute("select recorded_at, signature_count from petition_signatures order by recorded_at desc limit 1")
+    latest_update = cur.fetchone()
+    cur.close()
 
     return render_template('petition.html',
-            total_signatures=latest_update['signature_count'],
-            updated_at=dateutil.parser.parse(latest_update['recorded_at']),
+            total_signatures=latest_update['signature_count'] if latest_update is not None else 0,
+            updated_at=latest_update['recorded_at'] if latest_update is not None else None,
             rendered_at=datetime.datetime.utcnow()
             )
 

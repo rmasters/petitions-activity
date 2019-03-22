@@ -22,26 +22,30 @@ spec:
           volumeMounts:
             - name: rendered-pages
               mountPath: /usr/share/nginx/html
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
 
         - name: counter
-          image: registry.gitlab.com/rmasters/petition-counter:latest
+          image: registry.gitlab.com/rmasters/petition-counter:10
           command: ["sh", "-c", "while [ true ]; do flask render; sleep 1; done | tee -a /dev/stdout"]
           env:
             - name: RENDER_PATH
               value: /html
-            - name: DB_PATH
-              value: /data/petition.sqlite
+            - name: DB_HOST
+              value: petitiondb-mysql
+            - name: DB_USER
+              value: petitions
+            - name: DB_PASS
+              value: '***REMOVED***'
+            - name: DB_NAME
+              value: petition
           volumeMounts:
             - name: rendered-pages
               mountPath: /html
-            - name: petition-counts-db
-              mountPath: /data
 
       volumes:
-        - name: petition-counts-db
-          persistentVolumeClaim:
-            claimName: petition-counts-db
-
         - name: rendered-pages
           emptyDir: {}
 
@@ -67,19 +71,17 @@ spec:
     spec:
       containers:
         - name: counter
-          image: registry.gitlab.com/rmasters/petition-counter:latest
+          image: registry.gitlab.com/rmasters/petition-counter:10
           command: ["sh", "-c", "while [ true ]; do flask track_petition; sleep 5; done | tee -a /dev/stdout"]
           env:
-            - name: DB_PATH
-              value: /data/petition.sqlite
-          volumeMounts:
-            - name: petition-counts-db
-              mountPath: /data
-
-      volumes:
-        - name: petition-counts-db
-          persistentVolumeClaim:
-            claimName: petition-counts-db
+            - name: DB_HOST
+              value: petitiondb-mysql
+            - name: DB_USER
+              value: petitions
+            - name: DB_PASS
+              value: '***REMOVED***'
+            - name: DB_NAME
+              value: petition
 
       imagePullSecrets:
         - name: registry-gitlab
