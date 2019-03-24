@@ -25,9 +25,13 @@ def dict_factory(cursor, row):
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        g._database = MySQLdb.connect(host=os.environ.get('DB_HOST'), db=os.environ.get('DB_NAME'), user=os.environ.get('DB_USER'), password=os.environ.get('DB_PASS'), cursorclass=MySQLdb.cursors.DictCursor)
-        #g._database = sqlite3.connect(os.environ.get('DB_PATH'))
-        #g._database.row_factory = dict_factory
+        g._database = MySQLdb.connect(
+                host=os.environ.get('DB_HOST'),
+                db=os.environ.get('DB_NAME'),
+                user=os.environ.get('DB_USER'),
+                password=os.environ.get('DB_PASS'),
+                cursorclass=MySQLdb.cursors.DictCursor
+                )
         db = g._database
 
     return db
@@ -47,7 +51,7 @@ def relative_date(value):
 @app.cli.command('init_db')
 def init_db():
     db = get_db()
-    db.cursor().executescript("""
+    db.cursor().execute("""
     CREATE TABLE petition_signatures (
         id INTEGER PRIMARY KEY AUTO_INCREMENT,
         petition_id INTEGER,

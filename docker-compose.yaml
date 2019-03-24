@@ -4,7 +4,10 @@ services:
     build: app/
     command: flask run --host=0.0.0.0 --port=3000
     environment:
-      DB_PATH: /data/petition.sqlite3
+      DB_HOST: db
+      DB_USER: petitions
+      DB_PASS: password
+      DB_NAME: petitions
       RENDER_PATH: /html
       FLASK_ENV: development
     volumes:
@@ -13,3 +16,15 @@ services:
       - './html:/html'
     ports:
       - '3000:3000'
+    depends_on:
+      - db
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'true'
+      MYSQL_USER: petitions
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: petitions
+
