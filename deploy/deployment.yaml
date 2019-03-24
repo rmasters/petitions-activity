@@ -28,7 +28,7 @@ spec:
               port: 80
 
         - name: counter
-          image: registry.gitlab.com/rmasters/petition-counter:10
+          image: registry.gitlab.com/rmasters/petition-counter:11
           command: ["sh", "-c", "while [ true ]; do flask render; sleep 1; done | tee -a /dev/stdout"]
           env:
             - name: RENDER_PATH
@@ -71,7 +71,7 @@ spec:
     spec:
       containers:
         - name: counter
-          image: registry.gitlab.com/rmasters/petition-counter:10
+          image: registry.gitlab.com/rmasters/petition-counter:11
           command: ["sh", "-c", "while [ true ]; do flask track_petition; sleep 5; done | tee -a /dev/stdout"]
           env:
             - name: DB_HOST
