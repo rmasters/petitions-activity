@@ -44,6 +44,9 @@ def number_format(value):
 
 @app.template_filter('relative_date')
 def relative_date(value):
+    if value is None:
+        value = datetime.datetime.utcnow()
+
     delta = datetime.datetime.utcnow() - value
     return format_timedelta(delta, locale='en_GB')
 
