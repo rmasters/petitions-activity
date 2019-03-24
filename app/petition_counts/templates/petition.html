@@ -9,7 +9,6 @@
         <meta property="og:title" content="#RevokeArticle50 petition tracker" />
         <meta property="og:description" content="Tracking the number of signatures to the fastest-growing UK Parliament petition" />
         <meta name="twitter:creator" content="@rossmasters" />
-        <meta http-equiv="refresh" content="5" />
         <style>
 /* Some colours/styles shamelessly lifted. It's an awesome green. */
 * {
@@ -99,8 +98,8 @@ body {
         </header>
 
         <div class="container">
-            <p><abbr title="Stats last fetched at {{ updated_at }}">{{ updated_at|relative_date }} ago</abbr>, the number of signatories to the petition to the UK Government and Parliament, was:</p>
-            <h2 class="signature_count">{{ total_signatures | number_format }} <span class="signature_count__suffix">signatures</span></h2>
+            <p><abbr title="Stats last fetched at {{ updated_at }}" id="updated">{{ updated_at|relative_date }} ago</abbr>, the number of signatories to the petition to the UK Government and Parliament, was:</p>
+            <h2 class="signature_count"><span id="count">{{ total_signatures | number_format }}</span> <span class="signature_count__suffix">signatures</span></h2>
 
             <p>If you haven't already signed it:</p>
             <div style="text-align: center">
@@ -118,5 +117,22 @@ body {
                 <p></p>
             </div>
         </footer>
+
+        <script>
+          var updatedEle = document.querySelector('#updated');
+          var countEle = document.querySelector('#count');
+
+          window.setInterval(function() {
+            fetch('/count.json')
+              .then(function(resp) {
+                return resp.json();
+              })
+              .then(function(data) {
+                countEle.innerText = data['signature_count_formatted'];
+                updatedEle.setAttribute('title', "Stats last fetched at " + data['recorded_at']);
+                updatedEle.innerText = data['recorded_at_relative'] + ' ago';
+              });
+          }, 1500);
+        </script>
     </body>
 </html>

@@ -6,7 +6,7 @@ This is a small web app that tracks signatures on petitions to the [UK Governmen
 
 1.  Clone the repository, and `docker-compose up`.
 2.  Create the database schema with `docker-compose run app flask init_db`
-3.  The Flask app is available at http://localhost:3000/petition
+3.  The Flask app is available at http://localhost:3000/
 4.  Fetch petition data with `docker-compose run app flask track_petition`
 
 ## Preamble

@@ -4,7 +4,7 @@ import sqlite3
 import os
 from babel.dates import format_timedelta
 import dateutil.parser
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, jsonify
 import requests
 import MySQLdb
 import MySQLdb.cursors
@@ -88,13 +88,14 @@ def track_petition():
 
 @app.cli.command('render')
 def render():
-    rendered = petition()
-
     with open(os.path.join(os.environ.get('RENDER_PATH'), 'index.html'), 'w') as f:
-        f.write(rendered)
+        f.write(petition())
+
+    with open(os.path.join(os.environ.get('RENDER_PATH'), 'count.json'), 'w') as f:
+        f.write(petition_count().data.decode('utf-8'))
 
 
-@app.route("/petition")
+@app.route("/")
 def petition():
     conn = get_db()
     cur = conn.cursor()
@@ -108,3 +109,18 @@ def petition():
             rendered_at=datetime.datetime.utcnow()
             )
 
+
+@app.route("/count.json")
+def petition_count():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("select recorded_at, signature_count from petition_signatures order by recorded_at desc limit 1")
+    latest_update = cur.fetchone()
+    cur.close()
+
+    return jsonify(
+        recorded_at=latest_update['recorded_at'].strftime('%Y-%m-%dT%H:%M:%SZ'),
+        recorded_at_relative=relative_date(latest_update['recorded_at']),
+        signature_count=latest_update['signature_count'],
+        signature_count_formatted=number_format(latest_update['signature_count'])
+    )
