@@ -30,17 +30,12 @@ spec:
         - name: counter
           image: registry.gitlab.com/rmasters/petition-counter:11
           command: ["sh", "-c", "while [ true ]; do flask render; sleep 1; done | tee -a /dev/stdout"]
+          envFrom:
+            - secretRef:
+                name: petition-count-backend
           env:
             - name: RENDER_PATH
               value: /html
-            - name: DB_HOST
-              value: petitiondb-mysql
-            - name: DB_USER
-              value: petitions
-            - name: DB_PASS
-              value: '***REMOVED***'
-            - name: DB_NAME
-              value: petition
           volumeMounts:
             - name: rendered-pages
               mountPath: /html
@@ -73,15 +68,9 @@ spec:
         - name: counter
           image: registry.gitlab.com/rmasters/petition-counter:11
           command: ["sh", "-c", "while [ true ]; do flask track_petition; sleep 5; done | tee -a /dev/stdout"]
-          env:
-            - name: DB_HOST
-              value: petitiondb-mysql
-            - name: DB_USER
-              value: petitions
-            - name: DB_PASS
-              value: '***REMOVED***'
-            - name: DB_NAME
-              value: petition
+          envFrom:
+            - secretRef:
+                name: petition-count-backend
 
       imagePullSecrets:
         - name: registry-gitlab
